@@ -4,7 +4,7 @@ Prerequisites: Same as the OpenWrt image builder.
 
 Usage:
 execute the script in its directory:
-./build.sh <path and filename of the image profile> <action>
+./build.sh \<path and filename of the image profile\> \<action\>
 
 action type:
 image: build the firmware image according to the user-specified image profile.
