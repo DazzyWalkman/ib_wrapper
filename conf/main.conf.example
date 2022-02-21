@@ -1,0 +1,3 @@
+#rename this file to main.conf to take effect.
+#The mirror url for the OpenWrt image builder and package repo. The user can specify the most suitable one here to override the default setting.
+MIRROR=downloads.openwrt.org

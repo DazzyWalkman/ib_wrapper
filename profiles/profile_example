@@ -1,0 +1,13 @@
+#type of image: 'releases' or 'snapshots'
+TYPE=releases
+#release version. Needed when building a release image
+VERSION=21.02.1
+TARGET=ramips
+SUBTARGET=mt7620
+#Please refer to
+#https://openwrt.org/docs/guide-user/additional-software/imagebuilder
+#for explanation of the variables below
+PROFILE=lenovo_newifi-y1
+PACKAGES=luci-app-adblock zram-swap vsftpd samba4-server luci
+FILES=
+DISABLED_SERVICES=
