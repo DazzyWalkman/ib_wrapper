@@ -53,7 +53,7 @@ init_var() {
 }
 
 cleanup() {
-    rm -rf working/"$ib_dir" || exit 1
+    rm -rf working/"$ib_dir"* || exit 1
     exit 0
 }
 
