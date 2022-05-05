@@ -71,7 +71,7 @@ build() {
         ln -s ../../bin bin
     fi
     sed -i 's,downloads.openwrt.org,'"$mirror"',g' repositories.conf
-    rev=$(make info | grep "Current Revision" | cut -d"\"" -f2)
+    rev=$(grep "^REVISION" include/version.mk | cut -d"=" -f2)
     if [ -z "$rev" ]; then
         echo "Invalid Image Builder."
         exit 1
