@@ -20,6 +20,7 @@ init_var() {
     packages=$(grep "^PACKAGES" "$profile" | cut -d"=" -f2)
     files=$(grep "^FILES" "$profile" | cut -d"=" -f2)
     dsvcs=$(grep "^DISABLED_SERVICES" "$profile" | cut -d"=" -f2)
+    extpacks="$(pwd)"/packages/"$target"/"$subtarget"
     if [ "$type" = "releases" ]; then
         ver=$(grep "^VERSION" "$profile" | cut -d"=" -f2)
         if [ -z "$ver" ]; then
@@ -69,6 +70,9 @@ build() {
     cd working/"$ib_dir" || exit 1
     if [ ! -d ./bin ]; then
         ln -s ../../bin bin
+    fi
+    if [ -d "$extpacks" ]; then
+        find "$extpacks" -type f -name '*.ipk' -exec ln -s '{}' ./packages/ 2>/dev/null \;
     fi
     sed -i 's,downloads.openwrt.org,'"$mirror"',g' repositories.conf
     rev=$(grep "^REVISION" include/version.mk | cut -d"=" -f2)

@@ -32,5 +32,12 @@ Please refer to conf/main.conf.example
 
 Please refer to profile/profile_example
 
+**Custom packages**:
+If there is a custom package or ipk the user would prefer to use, the user can execute 
+`mkdir -p packages/<target>/<subtarget>`
+in the ib_wrapper directory, 
+then place the custom ipk within the `<subtarget>` directory.
+For example, if there is a custom package a.ipk for x86_64, place the a.ipk into the packages/x86/64 directory, then the x86_64 image builder can install the a.ipk to the resulting build, when the image profile calls for the said package.  
+
 **See also**:
 https://openwrt.org/docs/guide-user/additional-software/imagebuilder
