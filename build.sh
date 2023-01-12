@@ -21,6 +21,10 @@ init_var() {
     files=$(grep "^FILES" "$profile" | cut -d"=" -f2)
     dsvcs=$(grep "^DISABLED_SERVICES" "$profile" | cut -d"=" -f2)
     extpacks="$(pwd)"/packages/"$target"/"$subtarget"
+    VERSION_DIST=$(grep "^VERSION_DIST" "$profile" | cut -d"=" -f2)
+    if [ -z "$VERSION_DIST" ]; then
+        VERSION_DIST="OpenWrt"
+    fi
     if [ "$type" = "releases" ]; then
         ver=$(grep "^VERSION" "$profile" | cut -d"=" -f2)
         if [ -z "$ver" ]; then
@@ -72,7 +76,7 @@ build() {
         ln -s ../../bin bin
     fi
     if [ -d "$extpacks" ]; then
-        find "$extpacks" -type f -name '*.ipk' -exec ln -s '{}' ./packages/ 2>/dev/null \;
+        find "$extpacks" -type f -name '*.ipk' -exec ln -s '{}' ./packages/ \; 2>/dev/null
     fi
     sed -i 's,downloads.openwrt.org,'"$mirror"',g' repositories.conf
     rev=$(grep "^REVISION" include/version.mk | cut -d"=" -f2)
@@ -80,8 +84,30 @@ build() {
         echo "Invalid Image Builder."
         exit 1
     else
-        make image PROFILE="$devname" PACKAGES="$packages" FILES="$files" DISABLED_SERVICES="$dsvcs" EXTRA_IMAGE_NAME="$rev"
-        exit 0
+        sed -e '/^CONFIG_VERSION_DIST/s/^/#/' -i .config
+        echo CONFIG_VERSION_DIST=\""$VERSION_DIST"\" >>.config
+        if [ "$VERSION_DIST" != "OpenWrt" ]; then
+            mkdir -p files/etc/
+            cp ../../templates/openwrt_release files/etc/
+            if [ -n "$ver" ]; then
+                sed -e "s,%V,$ver,g" -i files/etc/openwrt_release
+            else
+                sed -e "s,%V,SNAPSHOT,g" -i files/etc/openwrt_release
+            fi
+            sed -e "s,%C,$rev,g" \
+                -e "s,%D,$VERSION_DIST,g" \
+                -e "s,%R,$rev,g" \
+                -e "s,%S,$target/$subtarget,g" \
+                -e "s,%A,$(grep ^CONFIG_TARGET_ARCH_PACKAGES .config | cut -d"=" -f2 | sed -e 's/\"//g'),g" \
+                -i files/etc/openwrt_release
+            files="files"
+            make image PROFILE="$devname" PACKAGES="$packages" FILES="$files" DISABLED_SERVICES="$dsvcs" EXTRA_IMAGE_NAME="$rev"
+            rm -rf files/etc/openwrt_release
+            exit 0
+        else
+            make image PROFILE="$devname" PACKAGES="$packages" FILES="$files" DISABLED_SERVICES="$dsvcs" EXTRA_IMAGE_NAME="$rev"
+            exit 0
+        fi
     fi
 }
 if [ -z "$2" ] || [ -n "$3" ]; then
