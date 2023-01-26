@@ -13,20 +13,20 @@ init_var() {
         echo "Image profile not found. Abort."
         exit 1
     fi
-    target=$(grep "^TARGET" "$profile" | cut -d"=" -f2)
-    subtarget=$(grep "^SUBTARGET" "$profile" | cut -d"=" -f2)
-    devname=$(grep "^PROFILE" "$profile" | cut -d"=" -f2)
-    type=$(grep "^TYPE" "$profile" | cut -d"=" -f2)
-    packages=$(grep "^PACKAGES" "$profile" | cut -d"=" -f2)
-    files=$(grep "^FILES" "$profile" | cut -d"=" -f2)
-    dsvcs=$(grep "^DISABLED_SERVICES" "$profile" | cut -d"=" -f2)
+    target=$(grep -w "^TARGET" "$profile" | cut -d"=" -f2)
+    subtarget=$(grep -w "^SUBTARGET" "$profile" | cut -d"=" -f2)
+    devname=$(grep -w "^PROFILE" "$profile" | cut -d"=" -f2)
+    type=$(grep -w "^TYPE" "$profile" | cut -d"=" -f2)
+    packages=$(grep -w "^PACKAGES" "$profile" | cut -d"=" -f2)
+    files=$(grep -w "^FILES" "$profile" | cut -d"=" -f2)
+    dsvcs=$(grep -w "^DISABLED_SERVICES" "$profile" | cut -d"=" -f2)
     extpacks="$(pwd)"/packages/"$target"/"$subtarget"
-    VERSION_DIST=$(grep "^VERSION_DIST" "$profile" | cut -d"=" -f2)
+    VERSION_DIST=$(grep -w "^VERSION_DIST" "$profile" | cut -d"=" -f2)
     if [ -z "$VERSION_DIST" ]; then
         VERSION_DIST="OpenWrt"
     fi
     if [ "$type" = "releases" ]; then
-        ver=$(grep "^VERSION" "$profile" | cut -d"=" -f2)
+        ver=$(grep -w "^VERSION" "$profile" | cut -d"=" -f2)
         if [ -z "$ver" ]; then
             echo "Missing releases version in the image profile. Abort."
         fi
@@ -38,7 +38,7 @@ init_var() {
 
     if [ -e "$confile" ]; then
         local mirror_tmp
-        mirror_tmp=$(grep "^MIRROR" "$confile" | cut -d"=" -f2)
+        mirror_tmp=$(grep -w "^MIRROR" "$confile" | cut -d"=" -f2)
         if [ -n "$mirror_tmp" ]; then
             mirror="$mirror_tmp"
         else
@@ -79,7 +79,7 @@ build() {
         find "$extpacks" -type f -name '*.ipk' -exec ln -s '{}' ./packages/ \; 2>/dev/null
     fi
     sed -i 's,downloads.openwrt.org,'"$mirror"',g' repositories.conf
-    rev=$(grep "^REVISION" include/version.mk | cut -d"=" -f2)
+    rev=$(grep -w "^REVISION" include/version.mk | cut -d"=" -f2)
     if [ -z "$rev" ]; then
         echo "Invalid Image Builder."
         exit 1
