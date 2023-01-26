@@ -84,9 +84,10 @@ build() {
         echo "Invalid Image Builder."
         exit 1
     else
-        sed -e '/^CONFIG_VERSION_DIST/s/^/#/' -i .config
-        echo CONFIG_VERSION_DIST=\""$VERSION_DIST"\" >>.config
+        cp .config config.old
         if [ "$VERSION_DIST" != "OpenWrt" ]; then
+            sed -e '/^CONFIG_VERSION_DIST/s/^/#/' -i .config
+            echo CONFIG_VERSION_DIST=\""$VERSION_DIST"\" >>.config
             mkdir -p files/etc/
             cp ../../templates/openwrt_release files/etc/
             if [ -n "$ver" ]; then
@@ -103,11 +104,11 @@ build() {
             files="files"
             make image PROFILE="$devname" PACKAGES="$packages" FILES="$files" DISABLED_SERVICES="$dsvcs" EXTRA_IMAGE_NAME="$rev"
             rm -rf files/etc/openwrt_release
-            exit 0
         else
             make image PROFILE="$devname" PACKAGES="$packages" FILES="$files" DISABLED_SERVICES="$dsvcs" EXTRA_IMAGE_NAME="$rev"
-            exit 0
         fi
+        mv config.old .config
+        exit 0
     fi
 }
 if [ -z "$2" ] || [ -n "$3" ]; then
