@@ -22,6 +22,9 @@ init_var() {
     dsvcs=$(grep -w "^DISABLED_SERVICES" "$profile" | cut -d"=" -f2)
     extpacks="$(pwd)"/packages/"$target"/"$subtarget"
     VERSION_DIST=$(grep -w "^VERSION_DIST" "$profile" | cut -d"=" -f2)
+    TARGET_ROOTFS_TARGZ=$(grep -x 'TARGET_ROOTFS_TARGZ=n' "$profile")
+    TARGET_ROOTFS_EXT4FS=$(grep -x 'TARGET_ROOTFS_EXT4FS=n' "$profile")
+    TARGET_ROOTFS_SQUASHFS=$(grep -x 'TARGET_ROOTFS_SQUASHFS=n' "$profile")
     if [ -z "$VERSION_DIST" ]; then
         VERSION_DIST="OpenWrt"
     fi
@@ -85,6 +88,20 @@ build() {
         exit 1
     else
         cp .config config.old
+        if [ "$target" =  "x86" ]; then
+            if [ -n "$TARGET_ROOTFS_TARGZ" ]; then
+                sed -e '/CONFIG_TARGET_ROOTFS_TARGZ/s/^/#/' -i .config
+                echo '# CONFIG_TARGET_ROOTFS_TARGZ is not set' >>.config
+            fi
+            if [ -n "$TARGET_ROOTFS_EXT4FS" ]; then
+                sed -e '/CONFIG_TARGET_ROOTFS_EXT4FS/s/^/#/' -i .config
+                echo '# CONFIG_TARGET_ROOTFS_EXT4FS is not set' >>.config
+            fi
+            if [ -n "$TARGET_ROOTFS_SQUASHFS" ]; then
+                sed -e '/CONFIG_TARGET_ROOTFS_SQUASHFS/s/^/#/' -i .config
+                echo '# CONFIG_TARGET_ROOTFS_SQUASHFS is not set' >>.config
+            fi
+        fi
         if [ "$VERSION_DIST" != "OpenWrt" ]; then
             sed -e '/^CONFIG_VERSION_DIST/s/^/#/' -i .config
             echo CONFIG_VERSION_DIST=\""$VERSION_DIST"\" >>.config

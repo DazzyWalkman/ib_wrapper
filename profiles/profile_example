@@ -12,3 +12,7 @@ PROFILE=lenovo_newifi-y1
 PACKAGES=luci-app-adblock zram-swap vsftpd samba4-server luci
 FILES=
 DISABLED_SERVICES=
+#Skip building following image types. Targets other than x86 will ignore these options.
+TARGET_ROOTFS_TARGZ=n
+TARGET_ROOTFS_EXT4FS=n
+TARGET_ROOTFS_SQUASHFS=n
