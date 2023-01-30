@@ -16,3 +16,5 @@ DISABLED_SERVICES=
 TARGET_ROOTFS_TARGZ=n
 TARGET_ROOTFS_EXT4FS=n
 TARGET_ROOTFS_SQUASHFS=n
+#Change the partition size of the rootfs. Targets other than x86 will ignore this option.
+TARGET_ROOTFS_PARTSIZE=200
