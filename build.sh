@@ -25,6 +25,7 @@ init_var() {
     TARGET_ROOTFS_TARGZ=$(grep -x 'TARGET_ROOTFS_TARGZ=n' "$profile")
     TARGET_ROOTFS_EXT4FS=$(grep -x 'TARGET_ROOTFS_EXT4FS=n' "$profile")
     TARGET_ROOTFS_SQUASHFS=$(grep -x 'TARGET_ROOTFS_SQUASHFS=n' "$profile")
+    declare -ig TARGET_ROOTFS_PARTSIZE=$(grep -w "^TARGET_ROOTFS_PARTSIZE" "$profile" | cut -d"=" -f2)
     if [ -z "$VERSION_DIST" ]; then
         VERSION_DIST="OpenWrt"
     fi
@@ -88,7 +89,7 @@ build() {
         exit 1
     else
         cp .config config.old
-        if [ "$target" =  "x86" ]; then
+        if [ "$target" = "x86" ]; then
             if [ -n "$TARGET_ROOTFS_TARGZ" ]; then
                 sed -e '/CONFIG_TARGET_ROOTFS_TARGZ/s/^/#/' -i .config
                 echo '# CONFIG_TARGET_ROOTFS_TARGZ is not set' >>.config
@@ -100,6 +101,10 @@ build() {
             if [ -n "$TARGET_ROOTFS_SQUASHFS" ]; then
                 sed -e '/CONFIG_TARGET_ROOTFS_SQUASHFS/s/^/#/' -i .config
                 echo '# CONFIG_TARGET_ROOTFS_SQUASHFS is not set' >>.config
+            fi
+            if [ "$TARGET_ROOTFS_PARTSIZE" -gt 0 ]; then
+                sed -e '/^CONFIG_TARGET_ROOTFS_PARTSIZE/s/^/#/' -i .config
+                echo "CONFIG_TARGET_ROOTFS_PARTSIZE=$TARGET_ROOTFS_PARTSIZE" >>.config
             fi
         fi
         if [ "$VERSION_DIST" != "OpenWrt" ]; then
