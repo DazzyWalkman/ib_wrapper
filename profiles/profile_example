@@ -18,3 +18,7 @@ TARGET_ROOTFS_EXT4FS=n
 TARGET_ROOTFS_SQUASHFS=n
 #Change the partition size of the rootfs. Targets other than x86 will ignore this option.
 TARGET_ROOTFS_PARTSIZE=200
+#The following options are for x86 only. They will be ignored if TARGET_ROOTFS_EXT4FS is off. Qemu-img has to be installed on host.
+VDI_IMAGES=y
+VMDK_IMAGES=y
+VHDX_IMAGES=y

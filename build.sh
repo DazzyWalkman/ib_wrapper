@@ -25,6 +25,9 @@ init_var() {
     TARGET_ROOTFS_TARGZ=$(grep -x 'TARGET_ROOTFS_TARGZ=n' "$profile")
     TARGET_ROOTFS_EXT4FS=$(grep -x 'TARGET_ROOTFS_EXT4FS=n' "$profile")
     TARGET_ROOTFS_SQUASHFS=$(grep -x 'TARGET_ROOTFS_SQUASHFS=n' "$profile")
+    VDI_IMAGES=$(grep -x 'VDI_IMAGES=y' "$profile")
+    VMDK_IMAGES=$(grep -x 'VMDK_IMAGES=y' "$profile")
+    VHDX_IMAGES=$(grep -x 'VHDX_IMAGES=y' "$profile")
     declare -ig TARGET_ROOTFS_PARTSIZE=$(grep -w "^TARGET_ROOTFS_PARTSIZE" "$profile" | cut -d"=" -f2)
     if [ -z "$VERSION_DIST" ]; then
         VERSION_DIST="OpenWrt"
@@ -97,6 +100,19 @@ build() {
             if [ -n "$TARGET_ROOTFS_EXT4FS" ]; then
                 sed -e '/CONFIG_TARGET_ROOTFS_EXT4FS/s/^/#/' -i .config
                 echo '# CONFIG_TARGET_ROOTFS_EXT4FS is not set' >>.config
+            else
+                if [ -n "$VDI_IMAGES" ]; then
+                    sed -e 'CONFIG_VDI_IMAGES/s/^/#/' -i .config
+                    echo 'CONFIG_VDI_IMAGES=y' >>.config
+                fi
+                if [ -n "$VMDK_IMAGES" ]; then
+                    sed -e 'CONFIG_VMDK_IMAGES/s/^/#/' -i .config
+                    echo 'CONFIG_VMDK_IMAGES=y' >>.config
+                fi
+                if [ -n "$VHDX_IMAGES" ]; then
+                    sed -e 'CONFIG_VHDX_IMAGES/s/^/#/' -i .config
+                    echo 'CONFIG_VHDX_IMAGES=y' >>.config
+                fi
             fi
             if [ -n "$TARGET_ROOTFS_SQUASHFS" ]; then
                 sed -e '/CONFIG_TARGET_ROOTFS_SQUASHFS/s/^/#/' -i .config
