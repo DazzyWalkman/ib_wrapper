@@ -118,6 +118,8 @@ build() {
                 sed -e '/CONFIG_TARGET_ROOTFS_SQUASHFS/s/^/#/' -i .config
                 echo '# CONFIG_TARGET_ROOTFS_SQUASHFS is not set' >>.config
             fi
+            #The official Image builder supports rootfs resize since
+            #https://github.com/openwrt/openwrt/commit/7b7edd25a571568438c886529d3443054e02f55f
             if [ "$TARGET_ROOTFS_PARTSIZE" -gt 0 ]; then
                 sed -e '/^CONFIG_TARGET_ROOTFS_PARTSIZE/s/^/#/' -i .config
                 echo "CONFIG_TARGET_ROOTFS_PARTSIZE=$TARGET_ROOTFS_PARTSIZE" >>.config
