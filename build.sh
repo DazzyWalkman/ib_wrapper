@@ -72,9 +72,14 @@ cleanup() {
 build() {
     if [ ! -d working/"$ib_dir" ]; then
         mkdir -p working
-        if wget "$url"/"$ib_name" -P working/; then
-            tar xf working/"$ib_name" -C working/ || exit 1
-            rm working/"$ib_name"
+        if [ -e working/"$ib_name" ] || wget "$url"/"$ib_name" -P working/; then
+            if tar xf working/"$ib_name" -C working/; then
+                rm working/"$ib_name"
+            else
+                echo "The image builder tarball seems to be corrupted."
+                rm working/"$ib_name"
+                exit 1
+            fi
         else
             echo "Failed to download the image builder. Abort."
             exit 1
