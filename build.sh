@@ -75,6 +75,9 @@ build() {
         if wget "$url"/"$ib_name" -P working/; then
             tar xf working/"$ib_name" -C working/ || exit 1
             rm working/"$ib_name"
+        else
+            echo "Failed to download the image builder. Abort."
+            exit 1
         fi
     fi
     mkdir -p bin
