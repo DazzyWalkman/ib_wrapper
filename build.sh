@@ -77,7 +77,7 @@ build() {
                 rm working/"$ib_name"
             else
                 echo "The image builder tarball seems to be corrupted."
-                rm working/"$ib_name"
+                rm -rf working/"$ib_dir"*
                 exit 1
             fi
         else
