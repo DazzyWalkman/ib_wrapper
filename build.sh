@@ -56,12 +56,19 @@ init_var() {
     if [ "$type" = "releases" ]; then
         url=https://"$mirror"/"$type"/"$ver"/targets/"$target"/"$subtarget"
         ib_dir=openwrt-imagebuilder-"$ver"-"$target"-"$subtarget".Linux-x86_64
-
+        declare -i major
+        major=$(echo "$ver" | cut -d"." -f1)
+        if [ "$major" -gt 23 ]; then
+            ib_name="$ib_dir".tar.zst
+        else
+            #WILL BE REMOVED when all releases using xz IB are EOL'ed.
+            ib_name="$ib_dir".tar.xz
+        fi
     else
         url=https://"$mirror"/"$type"/targets/"$target"/"$subtarget"
         ib_dir=openwrt-imagebuilder-"$target"-"$subtarget".Linux-x86_64
+        ib_name="$ib_dir".tar.zst
     fi
-    ib_name="$ib_dir".tar.xz
 }
 
 cleanup() {
