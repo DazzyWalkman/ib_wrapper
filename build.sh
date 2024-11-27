@@ -100,7 +100,7 @@ build() {
     if [ -d "$extpacks" ]; then
         find "$extpacks" -type f -name '*.ipk' -exec ln -s '{}' ./packages/ \; 2>/dev/null
     fi
-    sed -i 's,downloads.openwrt.org,'"$mirror"',g' repositories.conf
+    sed -i 's,downloads.openwrt.org,'"$mirror"',g' repositories*
     rev=$(grep -w "^REVISION" include/version.mk | cut -d"=" -f2)
     if [ -z "$rev" ]; then
         echo "Invalid Image Builder."
