@@ -98,7 +98,7 @@ build() {
         ln -s ../../bin bin
     fi
     if [ -d "$extpacks" ]; then
-        find "$extpacks" -type f -name '*.ipk' -exec ln -s '{}' ./packages/ \; 2>/dev/null
+        find "$extpacks" -type f -name '*.?pk' -exec ln -s '{}' ./packages/ \; 2>/dev/null
     fi
     sed -i 's,downloads.openwrt.org,'"$mirror"',g' repositories*
     rev=$(grep -w "^REVISION" include/version.mk | cut -d"=" -f2)
